@@ -1,0 +1,28 @@
+######################################################################
+# NAMEMC SERVER LINK                                                 #
+# EXAMPLE: https://namemc.com/server/example.net/ -----> example.net #
+######################################################################
+nameMC: "example.net"
+
+# Leave blank to not send a message
+rewardMsg: "&7You have received your rewards!!!!!"
+reward:
+  - "give %player% diamond 1"
+  - "bc %player% has liked the server on NameMC and received rewards! &c/namemc"
+notLiking: "&7You are not currently liking the server! Go to namemc.com/server/example.net"
+
+# Grabs the users who liked the server on NameMC every x amount of ticks (20 ticks per second)
+update: 3600
+
+database:
+  address: localhost
+  database: "rn"
+  username: "root"
+  password: "root"
+  port: 3306
+
+placeholders:
+  prefix: "&7[&c&lNameMC&7] "
+  primary: "&7"
+  secondary: "&c"
+  no_perms: "You do not have permission to do that: %node%"

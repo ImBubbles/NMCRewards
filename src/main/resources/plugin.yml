@@ -1,0 +1,8 @@
+name: NMCRewards
+version: '${project.version}'
+main: me.bubbles.nmcrewards.NMCRewards
+commands:
+  namemc:
+    usage: /<command>
+    description: Claim rewards for liking the server on NameMC
+    aliases: [nmc, claimnmc, nmcclaim, namemcclaim]
