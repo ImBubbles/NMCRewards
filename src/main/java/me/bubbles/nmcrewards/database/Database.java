@@ -56,7 +56,7 @@ public abstract class Database implements IDatabase {
     @Override
     public Connection getConnection() throws SQLException {
         return DriverManager.getConnection(
-                "jdbc:mysql://" + address + ":" + port + "/" + database, username, password);
+                "jdbc:mysql://" + address + ":" + port + "/" + database + "?autoReconnect=true&characterEncoding=utf8", username, password);
     }
 
 }
