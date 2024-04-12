@@ -21,6 +21,7 @@ public class Likes extends Timer {
     public Likes(NMCRewards plugin) {
         super(plugin, 0);
         if(init) throw new IllegalStateException("Already initialized");
+        this.likes = new HashSet<>();
         setCap(plugin.getConfigManager().getConfig("config.yml").getFileConfiguration().getInt("update"));
         try {
             url=new URL("https://api.namemc.com/server/"+plugin.getConfigManager().getConfig("config.yml").getFileConfiguration().getString("nameMC")+"/likes");
