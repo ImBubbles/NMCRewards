@@ -8,6 +8,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 
+import java.util.List;
+
 public class BaseCommand extends CommandBase {
     private final int index=0;
 
@@ -41,13 +43,12 @@ public class BaseCommand extends CommandBase {
             return;
         }
         String message = plugin.getConfigManager().getConfig("config.yml").getFileConfiguration().getString("rewardMsg");
-        if(!(message==null||message.isEmpty())) {
+        if (!message.isEmpty()) {
             utilSender.sendMessage(message);
         }
-        ConfigurationSection section = plugin.getConfigManager().getConfig("config.yml").getFileConfiguration().getConfigurationSection("reward");
-        for(String string : section.getKeys(false)) {
-            String command = section.getString(string);
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+        List<String> list = plugin.getConfigManager().getConfig("config.yml").getFileConfiguration().getStringList("reward");
+        for(String string : list) {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), string.replaceAll("%player%", utilSender.getPlayer().getName()));
         }
 
     }

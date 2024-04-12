@@ -28,6 +28,7 @@ public class Likes extends Timer {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
+        update();
     }
 
     public boolean hasLike(UUID uuid) {
