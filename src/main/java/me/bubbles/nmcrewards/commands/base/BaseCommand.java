@@ -8,6 +8,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 
+import java.util.List;
+
 public class BaseCommand extends CommandBase {
     private final int index=0;
 
@@ -25,30 +27,35 @@ public class BaseCommand extends CommandBase {
         if(!permissionCheck()) {
             return;
         }
-        ClaimedDB claimedDB = UtilDatabase.getClaimedDB();
-        boolean claimed = false;
-        if(claimedDB.hasValue(utilSender.getPlayer().getUniqueId())) {
-            if(claimedDB.getValue(utilSender.getPlayer().getUniqueId())) {
-                claimed=true;
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            ClaimedDB claimedDB = UtilDatabase.getClaimedDB();
+            boolean claimed = false;
+            if(claimedDB.hasValue(utilSender.getPlayer().getUniqueId())) {
+                if(claimedDB.getValue(utilSender.getPlayer().getUniqueId())) {
+                    claimed=true;
+                }
             }
-        }
-        if(claimed) {
-            utilSender.sendMessage("%prefix%%primary%You've already claimed your rewards.");
-            return;
-        }
-        if(!plugin.getLikes().hasLike(utilSender.getPlayer().getUniqueId())) {
-            utilSender.sendMessage(plugin.getConfigManager().getConfig("config.yml").getFileConfiguration().getString("notLiking"));
-            return;
-        }
-        String message = plugin.getConfigManager().getConfig("config.yml").getFileConfiguration().getString("rewardMsg");
-        if(!(message==null||message.isEmpty())) {
-            utilSender.sendMessage(message);
-        }
-        ConfigurationSection section = plugin.getConfigManager().getConfig("config.yml").getFileConfiguration().getConfigurationSection("reward");
-        for(String string : section.getKeys(false)) {
-            String command = section.getString(string);
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
-        }
+            boolean finalClaimed = claimed;
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                if(finalClaimed) {
+                    utilSender.sendMessage("%prefix%%primary%You've already claimed your rewards.");
+                    return;
+                }
+                if(!plugin.getLikes().hasLike(utilSender.getPlayer().getUniqueId())) {
+                    utilSender.sendMessage(plugin.getConfigManager().getConfig("config.yml").getFileConfiguration().getString("notLiking"));
+                    return;
+                }
+                String message = plugin.getConfigManager().getConfig("config.yml").getFileConfiguration().getString("rewardMsg");
+                if (!message.isEmpty()) {
+                    utilSender.sendMessage(message);
+                }
+                List<String> list = plugin.getConfigManager().getConfig("config.yml").getFileConfiguration().getStringList("reward");
+                for(String string : list) {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), string.replaceAll("%player%", utilSender.getPlayer().getName()));
+                }
+            });
+        });
+
 
     }
 

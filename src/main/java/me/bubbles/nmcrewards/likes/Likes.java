@@ -14,19 +14,21 @@ import java.util.UUID;
 
 public class Likes extends Timer {
 
-    private static boolean init=false;
+    private static boolean init = false;
     private URL url;
     private HashSet<UUID> likes;
 
     public Likes(NMCRewards plugin) {
         super(plugin, 0);
-        if(init) throw new IllegalStateException("Already initialized");
+        if (init) throw new IllegalStateException("Already initialized");
+        this.likes = new HashSet<>();
         setCap(plugin.getConfigManager().getConfig("config.yml").getFileConfiguration().getInt("update"));
         try {
-            url=new URL("https://api.namemc.com/server/"+plugin.getConfigManager().getConfig("config.yml").getFileConfiguration().getString("nameMC")+"/likes");
+            url = new URL("https://api.namemc.com/server/" + plugin.getConfigManager().getConfig("config.yml").getFileConfiguration().getString("nameMC") + "/likes");
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
+        update();
     }
 
     public boolean hasLike(UUID uuid) {
@@ -34,10 +36,9 @@ public class Likes extends Timer {
     }
 
     private void update() {
-        likes=new HashSet<>();
+        likes = new HashSet<>();
         try {
-            HttpURLConnection connection = null;
-            connection = (HttpURLConnection) url.openConnection();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
 
             if (connection.getResponseCode() != 200) {
@@ -54,11 +55,12 @@ public class Likes extends Timer {
             connection.disconnect();
 
             String jsonString = jsonStringBuilder.toString();
-
             String[] playerIdArray = jsonString.split(",");
             for (String uuid : playerIdArray) {
-                uuid = uuid.trim();
-                likes.add(UUID.fromString(uuid));
+                uuid = uuid.replace("[", "");
+                uuid = uuid.replace("]", "");
+                uuid = uuid.replaceAll("\"", "");
+                likes.add(UUID.fromString(uuid.trim()));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

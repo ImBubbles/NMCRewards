@@ -42,6 +42,7 @@ public final class NMCRewards extends JavaPlugin {
         ticker=new Ticker(this).setEnabled(true);
         likes = new Likes(this);
         timerManager.addTimer(likes);
+
     }
 
     // TICKER
