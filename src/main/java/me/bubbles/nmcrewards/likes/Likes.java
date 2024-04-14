@@ -31,6 +31,12 @@ public class Likes extends Timer {
         update();
     }
 
+    @Override
+    public void onComplete() {
+        update();
+        restart();
+    }
+
     public boolean hasLike(UUID uuid) {
         return likes.contains(uuid);
     }
